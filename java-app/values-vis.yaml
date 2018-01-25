@@ -1,8 +1,8 @@
 javaApp:
   namespace: default
-  name: appName
-  version: 1.0.0
-  serviceAccount: serviceaccount-name 
+  name: vis
+  version: 1.55.6
+  serviceAccount: digitaldealer-serviceaccount 
   service:
     minReadySeconds: 5
     replicaCount: 2
@@ -12,8 +12,8 @@ javaApp:
     prometheusPort: 9779
     prometheusScrape: true
   image:
-    name: imageName
-    tag: "tag"
+    name: docker.tools.theddapp.com/dd/vis
+    tag: 1.55.6
     pullPolicy: IfNotPresent
   rollingUpdateStrategy:
     strategy:
@@ -22,9 +22,9 @@ javaApp:
         maxUnavailable: 1
       type: RollingUpdate
   mountSecrets:
-    - mountName: mountName
-      mountPath: /some/path
-      secretName: some-secret
+    - mountName: secret-mount
+      mountPath: /etc/secrets/service-secret
+      secretName: digitaldealer-service-secret
   imagePullSecrets:
-    - image-pull-secret
+    - docker-registry-secret
     

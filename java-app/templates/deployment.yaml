@@ -44,8 +44,10 @@ items:
       group: com.scania.dd
     name: {{ .Values.javaApp.name }}
   spec:
-    minReadySeconds: 5
-    replicas: 2
+  {{- if .Values.javaApp.service.minReadySeconds }}
+    minReadySeconds: {{ .Values.javaApp.service.minReadySeconds }}
+  {{- end }}
+    replicas: {{ .Values.javaApp.service.replicaCount }}
     revisionHistoryLimit: 2
     selector:
       matchLabels:
@@ -54,7 +56,7 @@ items:
         group: com.scania.dd
 {{- if .Values.javaApp.rollingUpdateStrategy }}
 {{ toYaml .Values.javaApp.rollingUpdateStrategy | indent 4 -}}
-{{- end -}}
+{{- end }}
     template:
       metadata:
         labels:
