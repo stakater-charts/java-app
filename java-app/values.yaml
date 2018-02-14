@@ -1,0 +1,30 @@
+javaApp:
+  namespace: default
+  name: appName
+  version: 1.0.0
+  serviceAccount: serviceaccount-name 
+  service:
+    minReadySeconds: 5
+    replicaCount: 2
+    ingressPath: /vis/
+    rewriteTarget: /
+    ingressClass: external-ingress
+    prometheusPort: 9779
+    prometheusScrape: true
+  image:
+    name: imageName
+    tag: "tag"
+    pullPolicy: IfNotPresent
+  rollingUpdateStrategy:
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 1
+      type: RollingUpdate
+  mountSecrets:
+    - mountName: mountName
+      mountPath: /some/path
+      secretName: some-secret
+  imagePullSecrets:
+    - image-pull-secret
+    

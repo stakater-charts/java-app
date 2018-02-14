@@ -1,0 +1,21 @@
+javaApp:
+  namespace: default
+  name: plan
+  version: 1.0.9
+  serviceAccount: digitaldealer-serviceaccount 
+  service:
+    replicaCount: 1
+    ingressClass: external-ingress
+    prometheusPort: 9779
+    prometheusScrape: true
+  image:
+    name: docker.tools.theddapp.com/dd/plan
+    tag: 1.0.9
+    pullPolicy: IfNotPresent
+  mountSecrets:
+    - mountName: secret-mount
+      mountPath: /etc/secrets/service-secret
+      secretName: digitaldealer-service-secret
+  imagePullSecrets:
+    - docker-registry-secret
+    

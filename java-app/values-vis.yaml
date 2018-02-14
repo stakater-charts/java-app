@@ -1,0 +1,30 @@
+javaApp:
+  namespace: default
+  name: vis
+  version: 1.55.6
+  serviceAccount: digitaldealer-serviceaccount 
+  service:
+    minReadySeconds: 5
+    replicaCount: 2
+    ingressPath: /vis/
+    rewriteTarget: /
+    ingressClass: external-ingress
+    prometheusPort: 9779
+    prometheusScrape: true
+  image:
+    name: docker.tools.theddapp.com/dd/vis
+    tag: 1.55.6
+    pullPolicy: IfNotPresent
+  rollingUpdateStrategy:
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 1
+      type: RollingUpdate
+  mountSecrets:
+    - mountName: secret-mount
+      mountPath: /etc/secrets/service-secret
+      secretName: digitaldealer-service-secret
+  imagePullSecrets:
+    - docker-registry-secret
+    
