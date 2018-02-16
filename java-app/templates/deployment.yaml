@@ -19,6 +19,7 @@ items:
     selector:
       matchLabels:
         app: {{ .Values.javaApp.name }}
+        version: {{ .Values.javaApp.version }}
         group: {{ .Values.javaApp.group }}
 {{- with .Values.javaApp.rollingUpdateStrategy }}
 {{ toYaml . | indent 4 -}}

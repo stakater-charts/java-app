@@ -34,5 +34,6 @@ items:
     {{- end }}
     selector:
       app: {{ $.Values.javaApp.name }}
+      version: {{ $.Values.javaApp.version }}
       group: {{ $.Values.javaApp.group }}
 {{- end }}
