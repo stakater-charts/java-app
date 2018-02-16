@@ -11,17 +11,17 @@ items:
       group: {{ .Values.javaApp.group }}
     name: {{ .Values.javaApp.name }}
   spec:
-  {{- if .Values.javaApp.deployment.minReadySeconds }}
-    minReadySeconds: {{ .Values.javaApp.deployment.minReadySeconds }}
+  {{- with .Values.javaApp.deployment.minReadySeconds }}
+    minReadySeconds: {{ . }}
   {{- end }}
     replicas: {{ .Values.javaApp.deployment.replicaCount }}
-    revisionHistoryLimit: 2
+    revisionHistoryLimit: {{ .Values.javaApp.deployment.revisionHistoryLimit }}
     selector:
       matchLabels:
         app: {{ .Values.javaApp.name }}
         group: {{ .Values.javaApp.group }}
-{{- if .Values.javaApp.rollingUpdateStrategy }}
-{{ toYaml .Values.javaApp.rollingUpdateStrategy | indent 4 -}}
+{{- with .Values.javaApp.rollingUpdateStrategy }}
+{{ toYaml . | indent 4 -}}
 {{- end }}
     template:
       metadata:
@@ -38,74 +38,76 @@ items:
                 fieldPath: metadata.namespace
           - name: JAVA_APP_JAR
             value: "{{ .Values.javaApp.name }}-{{ .Values.javaApp.version }}.{{ .Values.javaApp.type }}"
-          {{- if .Values.javaApp.env }}
-            {{- range .Values.javaApp.env }}
+          {{- with .Values.javaApp.env }}
+            {{- range . }}
           - name: {{ .name }}
             value: {{ .value }}
             {{- end }}
           {{- end }}
           image: "{{ .Values.javaApp.image.name }}:{{ .Values.javaApp.image.tag }}"
           imagePullPolicy: {{ .Values.javaApp.image.pullPolicy }}
+          {{- with .Values.javaApp.deployment.probes.liveness }}
           livenessProbe:
             httpGet:
-              path: /health
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 180
+              path: {{ .path }}
+              port: {{ .port }}
+              scheme: {{ .scheme }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+          {{- end }}
           name: spring-boot
+          {{- with .Values.javaApp.ports }}
           ports:
-          - containerPort: 8080
-            name: http
-            protocol: TCP
-          - containerPort: 9779
-            name: prometheus
-            protocol: TCP
-          - containerPort: 8778
-            name: jolokia
-            protocol: TCP
+            {{- range . }}
+          - containerPort: {{ .containerPort }}
+            name: {{ .name }}
+            protocol: {{ .protocol }}
+            {{- end }}
+          {{- end }}
+          {{- with .Values.javaApp.deployment.probes.readiness }}
           readinessProbe:
             httpGet:
-              path: /health
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 10
+              path: {{ .path }}
+              port: {{ .port }}
+              scheme: {{ .scheme }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+          {{- end }}
           securityContext:
             privileged: false
-          {{- if .Values.javaApp.mounts }}
+          {{- with .Values.javaApp.mounts }}
           volumeMounts:
-            {{- if .Values.javaApp.mounts.secrets }}
-              {{- range .Values.javaApp.mounts.secrets }}
+            {{- with .secrets }}
+              {{- range . }}
           - mountPath: {{ .mountPath }}
             name: {{ .mountName }}
-            {{- if .readOnly }}
-            readOnly: {{ .readOnly }}
+            {{- with .readOnly }}
+            readOnly: {{ . }}
             {{- end }}
               {{- end }}
             {{- end }}
-          {{- if .Values.javaApp.mounts.hostPaths }}
-              {{- range .Values.javaApp.mounts.hostPaths }}
+          {{- with .hostPaths }}
+              {{- range . }}
           - mountPath: {{ .mountPath }}
             name: {{ .mountName }}
               {{- end }}
             {{- end }}
           {{- end }}
-        {{- if .Values.javaApp.imagePullSecrets }}
+        {{- with .Values.javaApp.imagePullSecrets }}
         imagePullSecrets:
-          {{- range .Values.javaApp.imagePullSecrets }}
+          {{- range . }}
         - name: {{ . }}
           {{- end }}
         {{- end }}
-        {{- if .Values.javaApp.serviceAccount }}
-        serviceAccount: {{ .Values.javaApp.serviceAccount }}
+        {{- with .Values.javaApp.serviceAccount }}
+        serviceAccount: {{ . }}
         {{- end }}
-        {{- if .Values.javaApp.mounts }}
+        {{- with .Values.javaApp.mounts }}
         volumes:
-          {{- range .Values.javaApp.mounts.secrets }}
+          {{- range .secrets }}
         - name: {{ .mountName }}
           secret:
             secretName: {{ .secretName }}
           {{- end }}
-          {{- range .Values.javaApp.mounts.hostPaths }}
+          {{- range .hostPaths }}
         - name: {{ .mountName }}
           hostPath:
             path: {{ .hostPath }}

@@ -3,24 +3,36 @@ javaApp:
   name: appName
   version: 1.0.0
   type: jar
-  serviceAccount: serviceaccount-name 
+  #serviceAccount: serviceaccount-name 
   group: com.stackator
   deployment:
     minReadySeconds: 5
     replicaCount: 2
+    revisionHistoryLimit: 2
+    probes:
+      liveness:
+        path: /health
+        port: 8080
+        scheme: HTTP
+        initialDelaySeconds: 180
+      readiness:
+        path: /health
+        port: 8080
+        scheme: HTTP
+        initialDelaySeconds: 10
   service:
-    ingressPath: /vis/
-    rewriteTarget: /
+    #ingressPath: /vis/
+    #rewriteTarget: /
     ingressClass: external-ingress
     forceSslRedirect: true
     prometheusPort: 9779
     prometheusScrape: true
     expose: true
-    ports:
-      - name: http
-        port: 8080
-        protocol: TCP
-        targetPort: 8080
+    # ports:
+    #   - name: http
+    #     port: 8080
+    #     protocol: TCP
+    #     targetPort: 8080
   image:
     name: imageName
     tag: "tag"
@@ -54,6 +66,17 @@ javaApp:
   #   value: value2
   # - name: key3
   #   value: value3
+
+  # ports:
+  # - containerPort: 8080
+  #   name: http
+  #   protocol: TCP
+  # - containerPort: 9779
+  #   name: prometheus
+  #   protocol: TCP
+  # - containerPort: 8778
+  #   name: jolokia
+  #   protocol: TCP
     
   imagePullSecrets:
     - image-pull-secret

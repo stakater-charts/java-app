@@ -1,4 +1,4 @@
-{{- if .Values.javaApp.service }}
+{{- with .Values.javaApp.service }}
 ---
 apiVersion: v1
 kind: List
@@ -7,32 +7,32 @@ items:
   kind: Service
   metadata:
     annotations:
-      {{- if .Values.javaApp.service.ingressPath }}
-      fabric8.io/ingress.path: {{ .Values.javaApp.service.ingressPath }}
+      {{- with .ingressPath }}
+      fabric8.io/ingress.path: {{ . }}
       {{- end }}
       fabric8.io/ingress.annotations: |-
-        {{- if .Values.javaApp.service.rewriteTarget }}
-        ingress.kubernetes.io/rewrite-target: {{ .Values.javaApp.service.rewriteTarget }}
+        {{- with .rewriteTarget }}
+        ingress.kubernetes.io/rewrite-target: {{ . }}
         {{- end }}
-        ingress.kubernetes.io/force-ssl-redirect: {{ .Values.javaApp.service.forceSslRedirect }}
-        kubernetes.io/ingress.class: {{ .Values.javaApp.service.ingressClass }}
-      prometheus.io/port: {{ .Values.javaApp.service.prometheusPort | quote }}
-      prometheus.io/scrape: {{ .Values.javaApp.service.prometheusScrape | quote }}
+        ingress.kubernetes.io/force-ssl-redirect: {{ .forceSslRedirect }}
+        kubernetes.io/ingress.class: {{ .ingressClass }}
+      prometheus.io/port: {{ .prometheusPort | quote }}
+      prometheus.io/scrape: {{ .prometheusScrape | quote }}
     labels:
-      expose: {{ .Values.javaApp.service.expose | quote }}
-      app: {{ .Values.javaApp.name }}
-      version: {{ .Values.javaApp.version }}
-      group: {{ .Values.javaApp.group }}
-    name: {{ .Values.javaApp.name }}
+      expose: {{ .expose | quote }}
+      app: {{ $.Values.javaApp.name }}
+      version: {{ $.Values.javaApp.version }}
+      group: {{ $.Values.javaApp.group }}
+    name: {{ $.Values.javaApp.name }}
   spec:
     ports:
-    {{- range .Values.javaApp.service.ports }}
+    {{- range .ports }}
     - name: {{ .name }}
       port: {{ .port }}
       protocol: {{ .protocol }}
       targetPort: {{ .targetPort }}
     {{- end }}
     selector:
-      app: {{ .Values.javaApp.name }}
-      group: {{ .Values.javaApp.group }}
+      app: {{ $.Values.javaApp.name }}
+      group: {{ $.Values.javaApp.group }}
 {{- end }}
