@@ -2,7 +2,6 @@ javaApp:
   namespace: default
   name: appName
   version: 1.0.0
-  type: jar
   #serviceAccount: serviceaccount-name 
   group: com.stackator
   deployment:
