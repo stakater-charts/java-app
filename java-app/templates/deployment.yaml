@@ -42,7 +42,7 @@ items:
           {{- with .Values.javaApp.env }}
             {{- range . }}
           - name: {{ .name }}
-            value: {{ .value | quote }}
+            value: "{{ .value }}"
             {{- end }}
           {{- end }}
           image: "{{ .Values.javaApp.image.name }}:{{ .Values.javaApp.image.tag }}"
