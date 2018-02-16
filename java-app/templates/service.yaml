@@ -1,0 +1,39 @@
+{{- with .Values.javaApp.service }}
+---
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      {{- with .ingressPath }}
+      fabric8.io/ingress.path: {{ . }}
+      {{- end }}
+      fabric8.io/ingress.annotations: |-
+        {{- with .rewriteTarget }}
+        ingress.kubernetes.io/rewrite-target: {{ . }}
+        {{- end }}
+        ingress.kubernetes.io/force-ssl-redirect: {{ .forceSslRedirect }}
+        kubernetes.io/ingress.class: {{ .ingressClass }}
+      prometheus.io/port: {{ .prometheusPort | quote }}
+      prometheus.io/scrape: {{ .prometheusScrape | quote }}
+    labels:
+      expose: {{ .expose | quote }}
+      app: {{ $.Values.javaApp.name }}
+      version: {{ $.Values.javaApp.version }}
+      group: {{ $.Values.javaApp.group }}
+    name: {{ $.Values.javaApp.name }}
+  spec:
+    ports:
+    {{- range .ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      protocol: {{ .protocol }}
+      targetPort: {{ .targetPort }}
+    {{- end }}
+    selector:
+      app: {{ $.Values.javaApp.name }}
+      version: {{ $.Values.javaApp.version }}
+      group: {{ $.Values.javaApp.group }}
+{{- end }}
