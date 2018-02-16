@@ -2,58 +2,24 @@
 apiVersion: v1
 kind: List
 items:
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      {{- if .Values.javaApp.service.ingressPath }}
-      fabric8.io/ingress.path: {{ .Values.javaApp.service.ingressPath }}
-      {{- end }}
-      fabric8.io/ingress.annotations: |-
-        {{- if .Values.javaApp.service.rewriteTarget }}
-        ingress.kubernetes.io/rewrite-target: {{ .Values.javaApp.service.rewriteTarget }}
-        {{- end }}
-        ingress.kubernetes.io/force-ssl-redirect: true
-        kubernetes.io/ingress.class: {{ .Values.javaApp.service.ingressClass }}
-      prometheus.io/port: {{ .Values.javaApp.service.prometheusPort | quote }}
-      prometheus.io/scrape: {{ .Values.javaApp.service.prometheusScrape | quote }}
-    labels:
-      expose: "true"
-      app: {{ .Values.javaApp.name }}
-      provider: fabric8
-      version: {{ .Values.javaApp.version }}
-      group: com.scania.dd
-    name: {{ .Values.javaApp.name }}
-  spec:
-    ports:
-    - name: http
-      port: 8080
-      protocol: TCP
-      targetPort: 8080
-    selector:
-      app: {{ .Values.javaApp.name }}
-      provider: fabric8
-      group: com.scania.dd
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
     labels:
       app: {{ .Values.javaApp.name }}
-      provider: fabric8
       version: {{ .Values.javaApp.version }}
-      group: com.scania.dd
+      group: {{ .Values.javaApp.group }}
     name: {{ .Values.javaApp.name }}
   spec:
-  {{- if .Values.javaApp.service.minReadySeconds }}
-    minReadySeconds: {{ .Values.javaApp.service.minReadySeconds }}
+  {{- if .Values.javaApp.deployment.minReadySeconds }}
+    minReadySeconds: {{ .Values.javaApp.deployment.minReadySeconds }}
   {{- end }}
-    replicas: {{ .Values.javaApp.service.replicaCount }}
+    replicas: {{ .Values.javaApp.deployment.replicaCount }}
     revisionHistoryLimit: 2
     selector:
       matchLabels:
         app: {{ .Values.javaApp.name }}
-        provider: fabric8
-        group: com.scania.dd
+        group: {{ .Values.javaApp.group }}
 {{- if .Values.javaApp.rollingUpdateStrategy }}
 {{ toYaml .Values.javaApp.rollingUpdateStrategy | indent 4 -}}
 {{- end }}
@@ -61,9 +27,8 @@ items:
       metadata:
         labels:
           app: {{ .Values.javaApp.name }}
-          provider: fabric8
           version: {{ .Values.javaApp.version }}
-          group: com.scania.dd
+          group: {{ .Values.javaApp.group }}
       spec:
         containers:
         - env:
@@ -72,7 +37,13 @@ items:
               fieldRef:
                 fieldPath: metadata.namespace
           - name: JAVA_APP_JAR
-            value: "{{ .Values.javaApp.name }}-{{ .Values.javaApp.version }}.jar"
+            value: "{{ .Values.javaApp.name }}-{{ .Values.javaApp.version }}.{{ .Values.javaApp.type }}"
+          {{- if .Values.javaApp.env }}
+            {{- range .Values.javaApp.env }}
+          - name: {{ .name }}
+            value: {{ .value }}
+            {{- end }}
+          {{- end }}
           image: "{{ .Values.javaApp.image.name }}:{{ .Values.javaApp.image.tag }}"
           imagePullPolicy: {{ .Values.javaApp.image.pullPolicy }}
           livenessProbe:
@@ -100,12 +71,22 @@ items:
             initialDelaySeconds: 10
           securityContext:
             privileged: false
-          {{- if .Values.javaApp.mountSecrets }}
+          {{- if .Values.javaApp.mounts }}
           volumeMounts:
-            {{- range .Values.javaApp.mountSecrets }}
+            {{- if .Values.javaApp.mounts.secrets }}
+              {{- range .Values.javaApp.mounts.secrets }}
           - mountPath: {{ .mountPath }}
             name: {{ .mountName }}
-            readOnly: true
+            {{- if .readOnly }}
+            readOnly: {{ .readOnly }}
+            {{- end }}
+              {{- end }}
+            {{- end }}
+          {{- if .Values.javaApp.mounts.hostPaths }}
+              {{- range .Values.javaApp.mounts.hostPaths }}
+          - mountPath: {{ .mountPath }}
+            name: {{ .mountName }}
+              {{- end }}
             {{- end }}
           {{- end }}
         {{- if .Values.javaApp.imagePullSecrets }}
@@ -117,11 +98,16 @@ items:
         {{- if .Values.javaApp.serviceAccount }}
         serviceAccount: {{ .Values.javaApp.serviceAccount }}
         {{- end }}
-        {{- if .Values.javaApp.mountSecrets }}
+        {{- if .Values.javaApp.mounts }}
         volumes:
-          {{- range .Values.javaApp.mountSecrets }}
+          {{- range .Values.javaApp.mounts.secrets }}
         - name: {{ .mountName }}
           secret:
             secretName: {{ .secretName }}
+          {{- end }}
+          {{- range .Values.javaApp.mounts.hostPaths }}
+        - name: {{ .mountName }}
+          hostPath:
+            path: {{ .hostPath }}
           {{- end }}
         {{- end }}

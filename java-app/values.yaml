@@ -2,29 +2,59 @@ javaApp:
   namespace: default
   name: appName
   version: 1.0.0
+  type: jar
   serviceAccount: serviceaccount-name 
-  service:
+  group: com.stackator
+  deployment:
     minReadySeconds: 5
     replicaCount: 2
+  service:
     ingressPath: /vis/
     rewriteTarget: /
     ingressClass: external-ingress
+    forceSslRedirect: true
     prometheusPort: 9779
     prometheusScrape: true
+    expose: true
+    ports:
+      - name: http
+        port: 8080
+        protocol: TCP
+        targetPort: 8080
   image:
     name: imageName
     tag: "tag"
     pullPolicy: IfNotPresent
-  rollingUpdateStrategy:
-    strategy:
-      rollingUpdate:
-        maxSurge: 1
-        maxUnavailable: 1
-      type: RollingUpdate
-  mountSecrets:
-    - mountName: mountName
-      mountPath: /some/path
-      secretName: some-secret
+
+  # rollingUpdateStrategy:
+  #   strategy:
+  #     rollingUpdate:
+  #       maxSurge: 1
+  #       maxUnavailable: 1
+  #     type: RollingUpdate
+
+  # mounts:
+  #   secrets:
+  #   - mountName: mountName
+  #     mountPath: /some/path
+  #     secretName: some-secret
+  #   - mountName: mountName2
+  #     mountPath: /some/path2
+  #     secretName: some-secret2
+  #     readOnly: true
+  #   hostPaths:
+  #   - mountName: name
+  #     mountPath: /path
+  #     hostPath: /host/path
+  
+  # env:
+  # - name: key1
+  #   value: value1
+  # - name: key2
+  #   value: value2
+  # - name: key3
+  #   value: value3
+    
   imagePullSecrets:
     - image-pull-secret
     
