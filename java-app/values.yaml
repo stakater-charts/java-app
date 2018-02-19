@@ -21,8 +21,10 @@ javaApp:
     #     initialDelaySeconds: 10
     # resources:
     #   limits:
+    #     memory: "128Mi"
     #     cpu: "1"
     #   requests:
+    #     memory: "64Mi"
     #     cpu: "0.5"
   service:
     #ingressPath: /vis/
