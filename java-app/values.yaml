@@ -8,17 +8,17 @@ javaApp:
     minReadySeconds: 5
     replicaCount: 2
     revisionHistoryLimit: 2
-    probes:
-      liveness:
-        path: /health
-        port: 8080
-        scheme: HTTP
-        initialDelaySeconds: 180
-      readiness:
-        path: /health
-        port: 8080
-        scheme: HTTP
-        initialDelaySeconds: 10
+    # probes:
+    #   liveness:
+    #     path: /health
+    #     port: 8080
+    #     scheme: HTTP
+    #     initialDelaySeconds: 180
+    #   readiness:
+    #     path: /health
+    #     port: 8080
+    #     scheme: HTTP
+    #     initialDelaySeconds: 10
   service:
     #ingressPath: /vis/
     #rewriteTarget: /
