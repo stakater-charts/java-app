@@ -45,13 +45,15 @@ items:
           {{- end }}
           image: "{{ .Values.javaApp.image.name }}:{{ .Values.javaApp.image.tag }}"
           imagePullPolicy: {{ .Values.javaApp.image.pullPolicy }}
-          {{- with .Values.javaApp.deployment.probes.liveness }}
+          {{- with .Values.javaApp.deployment.probes }}
+          {{- with .liveness }}
           livenessProbe:
             httpGet:
               path: {{ .path }}
               port: {{ .port }}
               scheme: {{ .scheme }}
             initialDelaySeconds: {{ .initialDelaySeconds }}
+          {{- end }}
           {{- end }}
           name: spring-boot
           {{- with .Values.javaApp.ports }}
@@ -62,13 +64,15 @@ items:
             protocol: {{ .protocol }}
             {{- end }}
           {{- end }}
-          {{- with .Values.javaApp.deployment.probes.readiness }}
+          {{- with .Values.javaApp.deployment.probes }}
+          {{- with .readiness }}
           readinessProbe:
             httpGet:
               path: {{ .path }}
               port: {{ .port }}
               scheme: {{ .scheme }}
             initialDelaySeconds: {{ .initialDelaySeconds }}
+          {{- end }}
           {{- end }}
           securityContext:
             privileged: false
