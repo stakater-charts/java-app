@@ -76,6 +76,15 @@ items:
           {{- end }}
           securityContext:
             privileged: false
+          {{- with .Values.javaApp.deployment.resources }}
+          resources:
+            limits:
+              memory: "{{ .limits.memory }}"
+              cpu: "{{ .limits.cpu }}"
+            requests:
+              memory: "{{ .requests.memory }}"
+              cpu: "{{ .requests.cpu }}"
+          {{- end }}
           {{- with .Values.javaApp.mounts }}
           volumeMounts:
             {{- with .secrets }}
