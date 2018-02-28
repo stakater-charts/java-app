@@ -78,12 +78,24 @@ items:
             privileged: false
           {{- with .Values.javaApp.deployment.resources }}
           resources:
+            {{- with .limits }}
             limits:
-              memory: "{{ .limits.memory }}"
-              cpu: "{{ .limits.cpu }}"
+              {{- with .memory }}
+              memory: "{{ . }}"
+              {{- end }}
+              {{- with .cpu }}
+              cpu: "{{ . }}"
+              {{- end }}
+            {{- end }}
+            {{- with .requests }}
             requests:
-              memory: "{{ .requests.memory }}"
-              cpu: "{{ .requests.cpu }}"
+              {{- with .memory }}
+              memory: "{{ . }}"
+              {{- end }}
+              {{- with .cpu }}
+              cpu: "{{ . }}"
+              {{- end }}
+            {{- end }}
           {{- end }}
           {{- with .Values.javaApp.mounts }}
           volumeMounts:
