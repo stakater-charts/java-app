@@ -48,10 +48,22 @@ items:
           {{- with .Values.javaApp.deployment.probes }}
           {{- with .liveness }}
           livenessProbe:
+            {{- with .failureThreshold }}
+            failureThreshold: {{ . }}
+            {{- end }}
             httpGet:
               path: {{ .path }}
               port: {{ .port }}
               scheme: {{ .scheme }}
+            {{- with .periodSeconds }}
+            periodSeconds: {{ . }}
+            {{- end }}
+            {{- with .successThreshold }}
+            successThreshold: {{ . }}
+            {{- end }}
+            {{- with .timeoutSeconds}}
+            timeoutSeconds: {{ . }}
+            {{- end }}
             initialDelaySeconds: {{ .initialDelaySeconds }}
           {{- end }}
           {{- end }}
@@ -67,10 +79,22 @@ items:
           {{- with .Values.javaApp.deployment.probes }}
           {{- with .readiness }}
           readinessProbe:
+            {{- with .failureThreshold }}
+            failureThreshold: {{ . }}
+            {{- end }}
             httpGet:
               path: {{ .path }}
               port: {{ .port }}
               scheme: {{ .scheme }}
+            {{- with .periodSeconds }}
+            periodSeconds: {{ . }}
+            {{- end }}
+            {{- with .successThreshold }}
+            successThreshold: {{ . }}
+            {{- end }}
+            {{- with .timeoutSeconds}}
+            timeoutSeconds: {{ . }}
+            {{- end }}
             initialDelaySeconds: {{ .initialDelaySeconds }}
           {{- end }}
           {{- end }}
