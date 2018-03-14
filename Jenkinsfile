@@ -4,9 +4,10 @@
 String chartPackageName = ""
 String chartName = "java-app"
 
-clientsNode(clientsImage: 'stakater/pipeline-tools:1.0') {
-    container(name: 'clients') {
+toolsNode(toolsImage: 'stakater/pipeline-tools:1.2.0') {
+    container(name: 'tools') {
         def helm = new io.stakater.charts.Helm()
+        def common = new io.stakater.Common()
         def chartManager = new io.stakater.charts.ChartManager()
         stage('Checkout') {
             checkout scm
@@ -22,7 +23,9 @@ clientsNode(clientsImage: 'stakater/pipeline-tools:1.0') {
         }
 
         stage('Upload Chart') {
-            chartManager.uploadToChartMuseum(WORKSPACE, chartName, chartPackageName)
+            String cmUsername = common.getEnvValue('CHARTMUSEUM_USERNAME')
+            String cmPassword = common.getEnvValue('CHARTMUSEUM_PASSWORD')
+            chartManager.uploadToChartMuseum(WORKSPACE, chartName, chartPackageName, cmUsername, cmPassword)
         }
     }
 }
