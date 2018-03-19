@@ -16,6 +16,11 @@ items:
         {{- end }}
         ingress.kubernetes.io/force-ssl-redirect: {{ .forceSslRedirect }}
         kubernetes.io/ingress.class: {{ .ingressClass }}
+        {{- with .additionalIngressAnnotations }}
+        {{- range . }}
+        {{ .key }}: {{ .value }}
+        {{- end }}
+        {{- end }}
       prometheus.io/port: {{ .prometheusPort | quote }}
       prometheus.io/scrape: {{ .prometheusScrape | quote }}
     labels:
