@@ -33,6 +33,9 @@ javaApp:
     prometheusPort: 9779
     prometheusScrape: true
     expose: true
+    additionalIngressAnnotations:
+      - key: monitor.stakater.com/enabled
+        value: true
     # ports:
     #   - name: http
     #     port: 8080
