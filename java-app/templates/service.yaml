@@ -28,6 +28,10 @@ items:
       app: {{ $.Values.javaApp.name }}
       version: {{ $.Values.javaApp.version }}
       group: {{ $.Values.javaApp.group }}
+      provider: {{ $.Values.javaApp.provider }}
+      chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+      release: {{ $.Release.Name | quote }}
+      heritage: {{ $.Release.Service | quote }}
     name: {{ $.Values.javaApp.name }}
   spec:
     ports:
@@ -39,6 +43,6 @@ items:
     {{- end }}
     selector:
       app: {{ $.Values.javaApp.name }}
-      version: {{ $.Values.javaApp.version }}
       group: {{ $.Values.javaApp.group }}
+      provider: {{ $.Values.javaApp.provider }}
 {{- end }}
