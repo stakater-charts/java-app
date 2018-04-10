@@ -9,6 +9,10 @@ items:
       app: {{ .Values.javaApp.name }}
       version: {{ .Values.javaApp.version }}
       group: {{ .Values.javaApp.group }}
+      provider: {{ .Values.javaApp.provider }}
+      chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      release: {{ .Release.Name | quote }}
+      heritage: {{ .Release.Service | quote }}
     name: {{ .Values.javaApp.name }}
   spec:
   {{- with .Values.javaApp.deployment.minReadySeconds }}
@@ -19,8 +23,8 @@ items:
     selector:
       matchLabels:
         app: {{ .Values.javaApp.name }}
-        version: {{ .Values.javaApp.version }}
         group: {{ .Values.javaApp.group }}
+        provider: {{ .Values.javaApp.provider }}
 {{- with .Values.javaApp.rollingUpdateStrategy }}
 {{ toYaml . | indent 4 -}}
 {{- end }}
@@ -28,8 +32,8 @@ items:
       metadata:
         labels:
           app: {{ .Values.javaApp.name }}
-          version: {{ .Values.javaApp.version }}
           group: {{ .Values.javaApp.group }}
+          provider: {{ .Values.javaApp.provider }}
       spec:
         containers:
         - env:

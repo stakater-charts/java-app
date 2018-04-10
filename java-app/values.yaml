@@ -3,7 +3,8 @@ javaApp:
   name: appName
   version: 1.0.0
   #serviceAccount: serviceaccount-name 
-  group: com.stackator
+  group: com.stackator.platform
+  provider: stakater
   deployment:
     minReadySeconds: 5
     replicaCount: 2
