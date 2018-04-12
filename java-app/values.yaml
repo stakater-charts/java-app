@@ -3,12 +3,16 @@ javaApp:
   name: appName
   version: 1.0.0
   #serviceAccount: serviceaccount-name 
-  group: com.stackator.platform
-  provider: stakater
+  labels:
+    group: com.stakater.platform
+    provider: stakater
   deployment:
     minReadySeconds: 5
     replicaCount: 2
     revisionHistoryLimit: 2
+    # podAnnotations:
+    #   - key: myannotationkey
+    #     value: myannotationvalue
     # probes:
     #   liveness:
     #     failureThreshold: 5
