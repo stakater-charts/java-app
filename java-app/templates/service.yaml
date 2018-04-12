@@ -25,13 +25,8 @@ items:
       prometheus.io/scrape: {{ .prometheusScrape | quote }}
     labels:
       expose: {{ .expose | quote }}
-      app: {{ $.Values.javaApp.name }}
-      version: {{ $.Values.javaApp.version }}
-      group: {{ $.Values.javaApp.group }}
-      provider: {{ $.Values.javaApp.provider }}
-      chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
-      release: {{ $.Release.Name | quote }}
-      heritage: {{ $.Release.Service | quote }}
+{{ include "labels.stakater" $ | indent 6 }}
+{{ include "labels.chart" $ | indent 6 }}
     name: {{ $.Values.javaApp.name }}
   spec:
     ports:
@@ -42,7 +37,5 @@ items:
       targetPort: {{ .targetPort }}
     {{- end }}
     selector:
-      app: {{ $.Values.javaApp.name }}
-      group: {{ $.Values.javaApp.group }}
-      provider: {{ $.Values.javaApp.provider }}
+{{ include "labels.selector" $ | indent 6 }}
 {{- end }}

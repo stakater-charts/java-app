@@ -6,13 +6,8 @@ items:
   kind: Deployment
   metadata:
     labels:
-      app: {{ .Values.javaApp.name }}
-      version: {{ .Values.javaApp.version }}
-      group: {{ .Values.javaApp.group }}
-      provider: {{ .Values.javaApp.provider }}
-      chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-      release: {{ .Release.Name | quote }}
-      heritage: {{ .Release.Service | quote }}
+{{ include "labels.stakater" . | indent 6 }}
+{{ include "labels.chart" . | indent 6 }}
     name: {{ .Values.javaApp.name }}
   spec:
   {{- with .Values.javaApp.deployment.minReadySeconds }}
@@ -22,18 +17,20 @@ items:
     revisionHistoryLimit: {{ .Values.javaApp.deployment.revisionHistoryLimit }}
     selector:
       matchLabels:
-        app: {{ .Values.javaApp.name }}
-        group: {{ .Values.javaApp.group }}
-        provider: {{ .Values.javaApp.provider }}
+{{ include "labels.selector" . | indent 8 }}
 {{- with .Values.javaApp.rollingUpdateStrategy }}
 {{ toYaml . | indent 4 -}}
 {{- end }}
     template:
       metadata:
         labels:
-          app: {{ .Values.javaApp.name }}
-          group: {{ .Values.javaApp.group }}
-          provider: {{ .Values.javaApp.provider }}
+{{ include "labels.selector" . | indent 10 }}
+        {{- with .Values.javaApp.deployment.podAnnotations }}
+        annotations:
+        {{- range . }}
+          {{ .key }}: {{ .value | quote }}
+        {{- end }}
+        {{- end }}
       spec:
         containers:
         - env:

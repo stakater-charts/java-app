@@ -11,6 +11,9 @@ javaApp:
   #serviceAccount: serviceaccount-name 
   group: com.stackator
   deployment:
+  # podAnnotations:
+  # - key: myannotationkey
+  #   value: myannotationvalue
     minReadySeconds: 5
     replicaCount: 2
     revisionHistoryLimit: 2
