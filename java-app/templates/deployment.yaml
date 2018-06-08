@@ -5,6 +5,20 @@ items:
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
+    {{- with .Values.javaApp.config }}
+    {{- with .fluentd }}
+    annotations:
+      fluentd_configuration: >
+      [
+        [
+          {
+            "expression": "{{ .regex }}",
+            "time_format": "{{ .timeFormat }}"
+          }
+        ]
+      ]
+    {{- end }}
+    {{- end }}
     labels:
 {{ include "labels.stakater" . | indent 6 }}
 {{ include "labels.chart" . | indent 6 }}
