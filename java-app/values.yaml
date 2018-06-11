@@ -103,7 +103,7 @@ javaApp:
   imagePullSecrets:
     - image-pull-secret
   
-  config:
-    fluentd:
-      regex: hello
-      timeFormat: world
+  # config:
+  #   fluentd:
+  #     regex: hello
+  #     timeFormat: world
