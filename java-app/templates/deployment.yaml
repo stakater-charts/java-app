@@ -5,20 +5,6 @@ items:
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
-    {{- with .Values.javaApp.config }}
-    {{- with .fluentd }}
-    annotations:
-      fluentd_configuration: >
-      [
-        [
-          {
-            "expression": "{{ .regex }}",
-            "time_format": "{{ .timeFormat }}"
-          }
-        ]
-      ]
-    {{- end }}
-    {{- end }}
     labels:
 {{ include "labels.stakater" . | indent 6 }}
 {{ include "labels.chart" . | indent 6 }}
@@ -39,12 +25,28 @@ items:
       metadata:
         labels:
 {{ include "labels.selector" . | indent 10 }}
-        {{- with .Values.javaApp.deployment.podAnnotations }}
+        {{- if (.Values.javaApp.deployment.podAnnotations) or (.Values.javaApp.config and .Values.javaApp.config.fluentd) }}
         annotations:
+        {{- end }}
+        {{- with .Values.javaApp.deployment.podAnnotations }}
         {{- range . }}
           {{ .key }}: {{ .value | quote }}
         {{- end }}
         {{- end }}
+        {{- with .Values.javaApp.config }}
+        {{- with .fluentd }}
+          fluentd_configuration: >
+            [
+              [
+                {
+                  "expression": "{{ .regex }}",
+                  "time_format": "{{ .timeFormat }}",
+                  "container_name": "spring-boot"
+                }
+              ]
+            ]
+          {{- end }}
+          {{- end }}
       spec:
         containers:
         - env:
