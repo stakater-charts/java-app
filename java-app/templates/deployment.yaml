@@ -39,15 +39,27 @@ items:
         {{- end }}
         {{- with .Values.javaApp.config }}
         {{- with .fluentd }}
-          fluentd_configuration: >
+          fluentdConfiguration: >
             [
-              [
-                {
-                  "expression": "{{ .regex }}",
-                  "time_format": "{{ .timeFormat }}",
-                  "container_name": "spring-boot"
+              {
+                "containers":
+                [
+                  {
+                    "expression": "{{ .regex }}",
+                    "timeFormat": "{{ .timeFormat }}",
+                    "containerName": "spring-boot"
+                  }
+                ]{{- with .notifications }},
+                "notifications": {
+                  {{- with .slack }}
+                  "slack": {
+                    "webhookURL": "{{ .webhookURL }}",
+                    "channelName": "{{ .channelName }}"
+                  }
+                  {{- end }}
                 }
-              ]
+                {{- end }}
+              }
             ]
           {{- end }}
           {{- end }}
@@ -82,7 +94,7 @@ items:
             {{- with .successThreshold }}
             successThreshold: {{ . }}
             {{- end }}
-            {{- with .timeoutSeconds}}
+            {{- with .timeoutSeconds }}
             timeoutSeconds: {{ . }}
             {{- end }}
             initialDelaySeconds: {{ .initialDelaySeconds }}
