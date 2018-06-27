@@ -45,6 +45,7 @@ items:
                 "containers":
                 [
                   {
+                    "expressionFirstLine": "{{ .regexFirstLine }}",
                     "expression": "{{ .regex }}",
                     "timeFormat": "{{ .timeFormat }}",
                     "containerName": "spring-boot"
