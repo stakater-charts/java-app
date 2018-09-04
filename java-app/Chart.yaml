@@ -5,7 +5,7 @@ version: 1.0.0
 keywords:
   - java-app
   - kubernetes
-home: https://github.com/stakater/chart-java-app
+home: https://github.com/stakater-charts/java-app
 maintainers:
 - name: Stakater
   email: stakater@aurorasolutions.io
