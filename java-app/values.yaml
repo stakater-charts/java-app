@@ -6,6 +6,7 @@ javaApp:
   labels:
     group: com.stakater.platform
     provider: stakater
+  tolerations: {}
   deployment:
     minReadySeconds: 5
     replicaCount: 2
