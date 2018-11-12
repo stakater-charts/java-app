@@ -41,16 +41,21 @@ javaApp:
     #     memory: "64Mi"
     #     cpu: "0.5"
   service:
-    #ingressPath: /vis/
-    #rewriteTarget: /
-    ingressClass: external-ingress
-    forceSslRedirect: true
-    prometheusPort: 9779
-    prometheusScrape: true
+    annotations:
+      prometheus.io/port: 9779
+      prometheus.io/scrape: true
+      config.xposer.stakater.com/Domain: stackator.com
+      config.xposer.stakater.com/IngressNameTemplate: '{{.Service}}-{{.Namespace}}'
+      config.xposer.stakater.com/IngressURLTemplate: '{{.Service}}.{{.Namespace}}.{{.Domain}}'
+      config.xposer.stakater.com/TLS: "true"
+      xposer.stakater.com/annotations: |-
+        kubernetes.io/ingress.class: external-ingress
+        ingress.kubernetes.io/force-ssl-redirect: true
+        monitor.stakater.com/enabled: true
+     
+    #config.xposer.stakater.com/IngressURLPath: "/vis/"
+    #    ingress.kubernetes.io/rewrite-target: /
     expose: true
-    #additionalIngressAnnotations:
-    #  - key: monitor.stakater.com/enabled
-    #    value: true
     # ports:
     #   - name: http
     #     port: 8080
