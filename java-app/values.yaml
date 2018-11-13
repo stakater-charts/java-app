@@ -42,8 +42,8 @@ javaApp:
     #     cpu: "0.5"
   service:
     annotations:
-      prometheus.io/port: 9779
-      prometheus.io/scrape: true
+      prometheus.io/port: "9779"
+      prometheus.io/scrape: "true"
       config.xposer.stakater.com/Domain: stackator.com
       config.xposer.stakater.com/IngressNameTemplate: '{{.Service}}-{{.Namespace}}'
       config.xposer.stakater.com/IngressURLTemplate: '{{.Service}}.{{.Namespace}}.{{.Domain}}'
